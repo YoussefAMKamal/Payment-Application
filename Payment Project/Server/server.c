@@ -5,6 +5,7 @@
 ST_accountsDB_t account_Data[255] = { 0 };
 ST_transaction_t trans_Data[255] = { 0 };
 uint8_t state[20];
+uint8_t store = 0;
 
 EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 {
@@ -26,11 +27,19 @@ EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accoun
 		if (accountRefrence[i].primaryAccountNumber != NULL)
 		{
 			if (strcmp(accountRefrence[i].primaryAccountNumber, cardData->primaryAccountNumber) == 0)
-				return SERVER_OK;
+				store = 1;
 		}
 	}
-	//printf("Error: Account not found\n");
-	return ACCOUNT_NOT_FOUND;
+	if (store == 1)
+	{
+		store = 0;
+		return SERVER_OK;
+	}
+	else
+	{
+		//printf("Error: Account not found\n");
+		return ACCOUNT_NOT_FOUND;
+	}
 }
 
 EN_serverError_t isBlockedAccount(ST_accountsDB_t* accountRefrence)
