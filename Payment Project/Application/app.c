@@ -7,7 +7,7 @@ ST_accountsDB_t accountRefrence = { 0 };
 
 void appStart(void)
 {
-	//strcpy(accountRefrence.primaryAccountNumber, "352351256123267591");
+	strcpy(accountRefrence.primaryAccountNumber, "352351256123267591");
 	//accountRefrence.state = BLOCKED;
 	getCardHolderName(&tran.cardHolderData);
 	getCardExpiryDate(&tran.cardHolderData);
