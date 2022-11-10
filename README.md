@@ -19,5 +19,6 @@ There are different types of transactions you can make, SALE, REFUND, Pre-Author
 - Implement the application
 - Testing the application
 
-# Note
-The application has been equipped with luhn algorithm to help in determining if the card's number is correct.
+# Notes
+- The application has been equipped with luhn algorithm to help in determining if the card's number is correct.
+- To use test functions correctly you should reactivate the error comments in the main functions.

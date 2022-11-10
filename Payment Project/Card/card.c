@@ -17,8 +17,8 @@ EN_cardError_t getCardHolderName(ST_cardData_t* cardData)
 
 EN_cardError_t getCardExpiryDate(ST_cardData_t* cardData)
 {
-	//printf("Please enter the card expiry date: ");
-	//scanf("%s", &cardData->cardExpirationDate);
+	printf("Please enter the card expiry date: ");
+	scanf("%s", &cardData->cardExpirationDate);
 	if (strlen(cardData->cardExpirationDate) != 5 || cardData->cardExpirationDate == NULL || 
 		cardData->cardExpirationDate[2] != '/' || isdigit(cardData->cardExpirationDate[0]) == 0 ||
 		isdigit(cardData->cardExpirationDate[1]) == 0 || isdigit(cardData->cardExpirationDate[3]) == 0 || 
