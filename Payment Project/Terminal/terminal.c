@@ -27,10 +27,12 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t* termData)
 EN_terminalError_t isCardExpired(ST_cardData_t cardData, ST_terminalData_t termData)
 {
 	for (int i=0;i<5;i++)
+	{
 		if (i < 3)
 			date[i] = termData.transactionDate[i + 3];
 		else
 			date[i] = termData.transactionDate[i + 5];
+	}
 	for (int i = 0; i < 2; i++)
 	{
 		c_y[i] = cardData.cardExpirationDate[i + 3];

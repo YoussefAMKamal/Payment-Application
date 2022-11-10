@@ -3,11 +3,12 @@
 #include "app.h"
 
 ST_transaction_t tran = { 0 };
-ST_accountsDB_t accountRefrence = { 0 };
+ST_accountsDB_t accountRefrence[255] = {0};
+uint32_t number = 1;
 
 void appStart(void)
 {
-	strcpy(accountRefrence.primaryAccountNumber, "352351256123267591");
+	strcpy(accountRefrence[number].primaryAccountNumber, "352351256123267591");
 	//accountRefrence.state = BLOCKED;
 	getCardHolderName(&tran.cardHolderData);
 	getCardExpiryDate(&tran.cardHolderData);
@@ -27,22 +28,24 @@ void appStart(void)
 				printf("Declined Amount Exceeding Limit\n");
 			else
 			{
-				if (isValidAccount(&tran.cardHolderData, &accountRefrence) == DECLINED_STOLEN_CARD)
+				if (isValidAccount(&tran.cardHolderData, &accountRefrence[number]) == ACCOUNT_NOT_FOUND)
 					printf("Declined Invalid Account\n");
 				else
 				{
-					if (isBlockedAccount(&accountRefrence) == BLOCKED_ACCOUNT)
+					if (isBlockedAccount(&accountRefrence[number]) == BLOCKED_ACCOUNT)
 						printf("Stolen Card\n");
 					else
 					{
-						accountRefrence.balance = 10000;
-						if (isAmountAvailable(&tran.terminalData, &accountRefrence) == LOW_BALANCE)
+						accountRefrence[number].balance = 10000;
+						if (isAmountAvailable(&tran.terminalData, &accountRefrence[number]) == LOW_BALANCE)
 							printf("Declined Insuffecient funds\n");
 						else
 						{
-							accountRefrence.balance -= tran.terminalData.transAmount;
+							printf("Balance Before Transaction Was %f\n", accountRefrence[number].balance);
+							accountRefrence[number].balance -= tran.terminalData.transAmount;
+							printf("Balance After Transaction is %f\n", accountRefrence[number].balance);
+							tran.transactionSequenceNumber = number++;
 							recieveTransactionData(&tran);
-							saveTransaction(&tran);
 						}
 					}
 				}
