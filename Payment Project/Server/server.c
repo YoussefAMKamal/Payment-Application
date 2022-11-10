@@ -66,13 +66,21 @@ EN_serverError_t isAmountAvailable(ST_terminalData_t* termData, ST_accountsDB_t*
 
 EN_serverError_t saveTransaction(ST_transaction_t* transData)
 {
-	trans_Data->cardHolderData = transData->cardHolderData;
-	trans_Data->terminalData = transData->terminalData;
-	trans_Data->transState = transData->transState;
-	trans_Data->transactionSequenceNumber = transData->transactionSequenceNumber;
-	listSavedTransactions();
-	printf("Transaction Saved Successfully\n");
-	return SERVER_OK;
+	if(transData->transactionSequenceNumber != NULL)
+	{
+		trans_Data->cardHolderData = transData->cardHolderData;
+		trans_Data->terminalData = transData->terminalData;
+		trans_Data->transState = transData->transState;
+		trans_Data->transactionSequenceNumber = transData->transactionSequenceNumber;
+		listSavedTransactions();
+		printf("Transaction Saved Successfully\n");
+		return SERVER_OK;
+	}
+	else
+	{
+		printf("Error: Saving failed no data received\n");
+		return SAVING_FAILED;
+	}
 }
 	
 void listSavedTransactions(void)
@@ -213,6 +221,19 @@ void saveTransactionTest(void)
 	ST_transaction_t tran;
 	
 	printf("Test Case 1:\n\
+	Input Data: No input data \n\
+	Expected Result: Error\n\
+	Actual Result: ");
+	strcpy(tran.cardHolderData.cardExpirationDate, "\0");
+	strcpy(tran.cardHolderData.cardHolderName, "\0");
+	strcpy(tran.cardHolderData.primaryAccountNumber, "\0");
+	tran.terminalData.maxTransAmount = 0;
+	strcpy(tran.terminalData.transactionDate, "\0");
+	tran.terminalData.transAmount = 0;
+	tran.transactionSequenceNumber = NULL;
+	saveTransaction(&tran);
+
+	printf("Test Case 2:\n\
 	Input Data: \n\
 	\tCard Holder Name: Youssef Ahmed Mohamed\n\
 	\tCard Exp. Date: 05/22\n\
@@ -241,6 +262,20 @@ void listSavedTransactionsTest(void)
 	Function Name : listSavedTransactions \n");
 
 	printf("Test Case 1:\n\
+	Input Data: No input data \n\
+	Expected Result: Nothing will be printed\n\
+	Actual Result: \n");
+	strcpy(trans_Data[0].cardHolderData.cardExpirationDate, "\0");
+	strcpy(trans_Data[0].cardHolderData.cardHolderName, "\0");
+	strcpy(trans_Data[0].cardHolderData.primaryAccountNumber, "\0");
+	trans_Data[0].terminalData.maxTransAmount = 0;
+	strcpy(trans_Data[0].terminalData.transactionDate, "\0");
+	trans_Data[0].terminalData.transAmount = 0;
+	trans_Data[0].transactionSequenceNumber = NULL;
+
+	listSavedTransactions();
+
+	printf("Test Case 2:\n\
 	Input Data: \n\
 	  Transaction 1:\n\
 	\tCard Holder Name: Youssef Ahmed Mohamed\n\
