@@ -15,7 +15,7 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 		return DECLINED_INSUFFECIENT_FUND;
 	if(isBlockedAccount(&account_Data) == BLOCKED_ACCOUNT)
 		return DECLINED_STOLEN_CARD;
-	if (saveTransaction(&transData) == SAVING_FAILED)
+	if (saveTransaction(transData) == SAVING_FAILED)
 		return INTERNAL_SERVER_ERROR;
 	return APPROVED;
 }
@@ -37,7 +37,7 @@ EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accoun
 	}
 	else
 	{
-		//printf("Error: Account not found\n");
+		//printf("Error: Account Not Found\n");
 		return ACCOUNT_NOT_FOUND;
 	}
 }
@@ -48,7 +48,7 @@ EN_serverError_t isBlockedAccount(ST_accountsDB_t* accountRefrence)
 		return SERVER_OK;
 	else
 	{
-		//printf("Error: Account is blocked");
+		//printf("Error: Account Is Blocked");
 		return BLOCKED_ACCOUNT;
 	}
 }
@@ -57,7 +57,7 @@ EN_serverError_t isAmountAvailable(ST_terminalData_t* termData, ST_accountsDB_t*
 {
 	if (termData->transAmount > accountRefrence->balance)
 	{
-		//printf("Error: Amount in balance is not enough");
+		//printf("Error: Amount In Balance Is Not Enough\n");
 		return LOW_BALANCE;
 	}
 	else
@@ -66,7 +66,7 @@ EN_serverError_t isAmountAvailable(ST_terminalData_t* termData, ST_accountsDB_t*
 
 EN_serverError_t saveTransaction(ST_transaction_t* transData)
 {
-	if(transData->transactionSequenceNumber != NULL)
+	if (transData->transactionSequenceNumber > 0 && transData->transactionSequenceNumber < 255)
 	{
 		trans_Data->cardHolderData = transData->cardHolderData;
 		trans_Data->terminalData = transData->terminalData;
@@ -78,7 +78,7 @@ EN_serverError_t saveTransaction(ST_transaction_t* transData)
 	}
 	else
 	{
-		printf("Error: Saving failed no data received\n");
+		printf("Error: Saving Failed No Data Received\n");
 		return SAVING_FAILED;
 	}
 }
@@ -119,30 +119,110 @@ void recieveTransactionDataTest(void)
 	printf("Tester Name: Youssef Ahmed Mohamed\n\
 	Function Name : recieveTransactionData \n");
 
+	strcpy(account_Data->primaryAccountNumber, "12345678901234567");
+	account_Data->state = RUNNING;
+	account_Data->balance = 3000.0;
+
+	ST_transaction_t tD;
+
 	printf("Test Case 1:\n\
+	Input Data: No input data\n\
+	Expected Result: Error\n\
+	Actual Result: ");
+	strcpy(tD.cardHolderData.cardExpirationDate, "\0");
+	strcpy(tD.cardHolderData.cardHolderName, "\0");
+	strcpy(tD.cardHolderData.primaryAccountNumber, "\0");
+	strcpy(tD.terminalData.transactionDate, "\0");
+	tD.terminalData.maxTransAmount = 0.0;
+	tD.terminalData.transAmount = 0.0;
+	tD.transactionSequenceNumber = NULL;
+
+	recieveTransactionData(&tD);
+
+	printf("Test Case 2:\n\
 	Input Data: \n\
 	\tCard Holder Name: Youssef Ahmed Mohamed\n\
 	\tCard Exp. Date: 05/22\n\
-	\tCard PAN: 12345678901234567\n\
-	\tTransaction Amount: 2000\n\
+	\tCard PAN: 12345678901234567 (As in DB & it isn't blocked)\n\
+	\tTransaction Amount: 2000 (Less than blance)\n\
 	\tMax Amount: 5000\n\
 	\tTransaction Date: 16/03/2022\n\
-	\tTransaction Seq. no.: 10\n\
-	\tTransaction State: Approved\n\
+	\tTransaction Seq. no.: 1\n\
 	Expected Result: No Error\n\
 	Actual Result: \n");
-	strcpy(trans_Data[2].cardHolderData.cardExpirationDate, "05/22");
-	strcpy(trans_Data[2].cardHolderData.cardHolderName, "Youssef Ahmed Mohamed");
-	strcpy(trans_Data[2].cardHolderData.primaryAccountNumber, "12345678901234567");
-	trans_Data[2].terminalData.maxTransAmount = 5000.0;
-	strcpy(trans_Data[2].terminalData.transactionDate, "16/03/2022");
-	trans_Data[2].terminalData.transAmount = 2000.0;
-	trans_Data[2].transactionSequenceNumber = 10;
-	trans_Data[2].transState = APPROVED;
-	account_Data->state = RUNNING;
-	strcpy(account_Data->primaryAccountNumber, "12345678901234567");
-	account_Data->balance = 3000.0;
-	recieveTransactionData(&trans_Data);
+	strcpy(tD.cardHolderData.cardExpirationDate, "05/22");
+	strcpy(tD.cardHolderData.cardHolderName, "Youssef Ahmed Mohamed");
+	strcpy(tD.cardHolderData.primaryAccountNumber, "12345678901234567");
+	strcpy(tD.terminalData.transactionDate, "16/03/2022");
+	tD.terminalData.maxTransAmount = 5000.0;
+	tD.terminalData.transAmount = 2000.0;
+	tD.transactionSequenceNumber = 1;
+
+	recieveTransactionData(&tD);
+
+	printf("Test Case 3:\n\
+	Input Data: \n\
+	\tCard Holder Name: Youssef Ahmed Mohamed\n\
+	\tCard Exp. Date: 05/22\n\
+	\tCard PAN: 15349445848148523 (Not as in DB & it isn't blocked)\n\
+	\tTransaction Amount: 2000 (Less than blance)\n\
+	\tMax Amount: 5000\n\
+	\tTransaction Date: 16/03/2022\n\
+	\tTransaction Seq. no.: 2\n\
+	Expected Result: Error\n\
+	Actual Result: ");
+	strcpy(tD.cardHolderData.cardExpirationDate, "05/22");
+	strcpy(tD.cardHolderData.cardHolderName, "Youssef Ahmed Mohamed");
+	strcpy(tD.cardHolderData.primaryAccountNumber, "15349445848148523");
+	strcpy(tD.terminalData.transactionDate, "16/03/2022");
+	tD.terminalData.maxTransAmount = 5000.0;
+	tD.terminalData.transAmount = 2000.0;
+	tD.transactionSequenceNumber = 2;
+
+	recieveTransactionData(&tD);
+
+	printf("Test Case 4:\n\
+	Input Data: \n\
+	\tCard Holder Name: Youssef Ahmed Mohamed\n\
+	\tCard Exp. Date: 05/22\n\
+	\tCard PAN: 12345678901234567 (As in DB & it isn't blocked)\n\
+	\tTransaction Amount: 4000 (More than blance)\n\
+	\tMax Amount: 5000\n\
+	\tTransaction Date: 16/03/2022\n\
+	\tTransaction Seq. no.: 3\n\
+	Expected Result: Error\n\
+	Actual Result: ");
+	strcpy(tD.cardHolderData.cardExpirationDate, "05/22");
+	strcpy(tD.cardHolderData.cardHolderName, "Youssef Ahmed Mohamed");
+	strcpy(tD.terminalData.transactionDate, "16/03/2022");
+	strcpy(tD.cardHolderData.primaryAccountNumber, "12345678901234567");
+	tD.terminalData.maxTransAmount = 5000.0;
+	tD.terminalData.transAmount = 4000.0;
+	tD.transactionSequenceNumber = 3;
+
+	recieveTransactionData(&tD);
+
+	printf("Test Case 5:\n\
+	Input Data: \n\
+	\tCard Holder Name: Youssef Ahmed Mohamed\n\
+	\tCard Exp. Date: 05/22\n\
+	\tCard PAN: 12345678901234567 (As in DB & it is blocked)\n\
+	\tTransaction Amount: 2000 (Less than blance)\n\
+	\tMax Amount: 5000\n\
+	\tTransaction Date: 16/03/2022\n\
+	\tTransaction Seq. no.: 4\n\
+	Expected Result: Error\n\
+	Actual Result: ");
+	strcpy(tD.cardHolderData.cardExpirationDate, "05/22");
+	strcpy(tD.cardHolderData.cardHolderName, "Youssef Ahmed Mohamed");
+	strcpy(tD.cardHolderData.primaryAccountNumber, "12345678901234567");
+	strcpy(tD.terminalData.transactionDate, "16/03/2022");
+	tD.terminalData.maxTransAmount = 5000.0;
+	tD.terminalData.transAmount = 2000.0;
+	tD.transactionSequenceNumber = 4;
+
+	account_Data->state = BLOCKED;
+	recieveTransactionData(&tD);
 }
 
 void isValidAccountTest(void)
@@ -227,8 +307,8 @@ void saveTransactionTest(void)
 	strcpy(tran.cardHolderData.cardExpirationDate, "\0");
 	strcpy(tran.cardHolderData.cardHolderName, "\0");
 	strcpy(tran.cardHolderData.primaryAccountNumber, "\0");
-	tran.terminalData.maxTransAmount = 0;
 	strcpy(tran.terminalData.transactionDate, "\0");
+	tran.terminalData.maxTransAmount = 0;
 	tran.terminalData.transAmount = 0;
 	tran.transactionSequenceNumber = NULL;
 	saveTransaction(&tran);

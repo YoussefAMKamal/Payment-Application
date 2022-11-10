@@ -1,2 +1,12 @@
-﻿  app.c
-  Payment Project.vcxproj -> C:\Users\yo200\Desktop\Payment Project\Debug\Payment Project.exe
+﻿  server.c
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(12,62): warning C4047: 'function': 'ST_accountsDB_t *' differs in levels of indirection from 'ST_accountsDB_t (*)[255]'
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(12,49): warning C4024: 'isValidAccount': different types for formal and actual parameter 2
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(14,63): warning C4047: 'function': 'ST_accountsDB_t *' differs in levels of indirection from 'ST_accountsDB_t (*)[255]'
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(14,50): warning C4024: 'isAmountAvailable': different types for formal and actual parameter 2
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(16,35): warning C4047: 'function': 'ST_accountsDB_t *' differs in levels of indirection from 'ST_accountsDB_t (*)[255]'
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(16,22): warning C4024: 'isBlockedAccount': different types for formal and actual parameter 1
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(92,55): warning C4047: '!=': 'uint32_t' differs in levels of indirection from 'void *'
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(138,37): warning C4047: '=': 'uint32_t' differs in levels of indirection from 'void *'
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(313,39): warning C4047: '=': 'uint32_t' differs in levels of indirection from 'void *'
+C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Payment Project\Server\server.c(354,48): warning C4047: '=': 'uint32_t' differs in levels of indirection from 'void *'
+  Payment Project.vcxproj -> C:\Users\yo200\Desktop\Udacity\C Project\Payment Project\Debug\Payment Project.exe
