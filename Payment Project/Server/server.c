@@ -16,10 +16,7 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 	if (isValidAccount(&transData->cardHolderData, &account_Data) == ACCOUNT_NOT_FOUND)
 		return FRAUD_CARD;
 	if (isAmountAvailable(&transData->terminalData, &account_Data) == LOW_BALANCE)
-	{
-		printf("fffffffffff\n");
 		return DECLINED_INSUFFECIENT_FUND;
-	}
 	if(isBlockedAccount(&account_Data) == BLOCKED_ACCOUNT)
 		return DECLINED_STOLEN_CARD;
 	if (saveTransaction(transData) == SAVING_FAILED)
